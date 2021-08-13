@@ -63,7 +63,16 @@ export default class Main extends Component {
                           )}{' '}
                           ETH
                         </p>
-                        <button className='float-right btn btn-secondary'>
+                        <button
+                          className='float-right btn btn-secondary'
+                          onClick={(event) => {
+                            let tipAmount = window.web3.utils.toWei(
+                              '0.1',
+                              'Ether'
+                            );
+                            this.props.tipPost(event.target.name, tipAmount);
+                          }}
+                        >
                           TIP 0.1 ETH
                         </button>
                       </li>

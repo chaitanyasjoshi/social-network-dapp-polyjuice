@@ -44,7 +44,6 @@ class App extends Component {
     // Load user account
     const accounts = [window.ethereum.selectedAddress];
     this.setState({ account: accounts[0] });
-    console.log(accounts);
 
     // Network ID, address and abi
     const networkID = await web3.eth.net.getId();
@@ -71,7 +70,7 @@ class App extends Component {
   }
 
   createPost(content) {
-    console.log(this.state.account);
+    this.setState({ loading: true });
     this.state.socialNetwork.methods
       .createPost(content)
       .send({
@@ -79,9 +78,17 @@ class App extends Component {
         from: this.state.account,
       })
       .then((receipt) => {
-        this.loadBlockchainData();
-        //this.setState({ loading: false });
-        //window.location.reload();
+        this.setState({ loading: false });
+      });
+  }
+
+  tipPost(id, tipAmount) {
+    this.setState({ loading: true });
+    this.state.socialNetwork.methods
+      .tipPost(id)
+      .send({ gas: 6000000, from: this.state.account, value: tipAmount })
+      .then((receipt) => {
+        this.setState({ loading: false });
       });
   }
 
@@ -97,6 +104,7 @@ class App extends Component {
     };
 
     this.createPost = this.createPost.bind(this);
+    this.tipPost = this.tipPost.bind(this);
   }
 
   render() {
@@ -108,7 +116,11 @@ class App extends Component {
             <p>Loading...</p>
           </div>
         ) : (
-          <Main posts={this.state.posts} createPost={this.createPost} />
+          <Main
+            posts={this.state.posts}
+            createPost={this.createPost}
+            tipPost={this.tipPost}
+          />
         )}
       </div>
     );
